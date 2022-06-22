@@ -1,0 +1,721 @@
+#!/bin/bash
+ORNG='\033[0;33m'
+NC='\033[0m'
+W='\033[1;37m'
+LP='\033[1;35m'
+YLW='\033[1;33m'
+RED='\033[0;31m'
+LBBLUE='\e[104m'
+# Exploitation
+# Metepreter payload
+attack_opts(){
+    echo -e "${W}"
+    PS3='What would you like to do?'
+        options=("Frameworks" "Create a Payload" "Obfuscate Payload" "Post Attack Options" "Delivery Methods" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Frameworks")
+                    fwork
+                    ;;
+
+                "Create a Payload")
+                    dropper_mods
+                    ;;
+
+                "Obfuscate Payload")
+                    obs
+                    ;;
+
+                "Delivery Methods")
+                    dmeth
+                    ;;
+
+                "Post Attack Options")
+                    postopt
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Post Attack Options
+postopt(){
+    echo -e "${W}"
+    PS3='What would you like to do?'
+        options=("Persistence" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Persistence")
+                    persist
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    attack_opts
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Persistence
+persist(){
+    echo -e "${W}"
+    PS3='What would you like to do?'
+        options=("EvilReg" "AndroPers" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "EvilReg")
+                    echo -e "${W}This module creates persistence through a registery key\nThis requires target to reboot before payload calls back${NC}"
+                    echo -e "${YLW}Would you like to continue?(y/n)${NC}"
+                    read REG
+                    if [[ ${REG} == 'y' ]]; then
+                        bash tools/evilreg/evilreg.sh
+                    else
+                        persist
+                    fi
+                    ;;
+
+                "AndroPers")
+                    echo -e "${W}This script can be use in order to make your android payload persistent\nJust copt it to victim device and payload will auto-start upon restart${NC}"
+                    kdialog --geometry 600x800 --textbox /opt/TigerShark/.vs/androp.txt
+                    ;;
+                
+                "Back")
+                    postopt
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Frameworks
+fwork(){
+    echo -e "${YLW}"
+    PS3='Which Framework would you like to work?'
+        options=("C2 Frameworks" "Explotation Frameworks" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "C2 Frameworks")
+                    ./Modules/CnC/merlin.sh
+                    ;;
+
+                "Explotation Frameworks")
+                    xframe
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Delivery Methods
+dmeth(){
+    echo -e "${YLW}"
+    PS3='Please choose your preferred method'
+        options=("JS_DriveBy" "GoSmish" "PowerShell OneLiner" "Back") #"FlashLogger" 
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "JS-DriveBy")
+                    ./Modules/CnC/js_db.sh
+                    ;;
+
+                "GoSmish")
+                    echo -e "${YLW}This script uses ${RED}TWILO${YLW} to send phishing SMS's. ${ORNG} A ${RED}VALID${ORNG} gophish campaign ${RED}MUST${ORNG} already be running.${NC}"
+                    echo -e "${ORNG}Please edit the script in xTerm window as necessary (${RED}Please read Code Comments for hints${ORNG}), when finished just save and close${NC}"
+                    xterm -e sudo nano /opt/TigerShark/Modules/Phishing/Trawler/gosmish.py
+                    echo -e "${W}Enter you are done please hit ${ORNG}enter${NC}"
+                    read JTIM
+                    sudo python3 /opt/TigerShark/Modules/Phishing/Trawler/gosmish.py
+                    ;;
+
+                "PowerShell OneLiner")
+                    ./Modules/Droppers/Meter/dkmc.sh
+                    ;;
+
+              "Back")
+                    cmods
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Exploitative Frameworks
+xframe(){
+    echo -e "${YLW}"
+    PS3='Please choose your preferred framework'
+        options=("ThunderShell" "Pupy" "DNS-Persist" "Mouse (Mac iOS)" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "ThunderShell")
+                    ./Modules/CnC/thunder.sh
+                    ;;
+
+                "Pupy")
+                    ./Modules/CnC/pupy.sh
+                    ;;
+
+                "DNS-Persist")
+                    ./Modules/CnC/dnspers.sh
+                    ;;
+
+                "Mouse (Mac iOS)")
+                    ./Modules/CnC/mouse.sh
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Payload Generation
+dropper_mods(){
+    if [[ ! -d '/opt/TigerShark/Payloads' ]]; then
+        mkdir /opt/TigerShark/Payloads
+    fi
+    echo -e "${LP}"
+    echo -e "${RED}NOTE: ${LBBLUE}Crypting your payloads is encouraged${NC} \n${LBBLUE}for best results and low detection rates${NC}"
+    PS3='How would you like to create your payload?'
+        options=("Meterpreter payloads" "CVE's" "Droid Payloads" "Back") # "Macros"
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Meterpreter payloads")
+                    meters
+                    ;;
+
+                "CVE's")
+                    cve
+                    ;;
+                
+                "Droid Payloads")
+                    droid
+                    ;;
+
+                "Back")
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Android Payloads
+droid(){
+    echo -e "${RED}"
+        PS3='How would you like to compile your android payload?'
+            options=("GetDroid" "apkinfector" "ApkWash" "Ghost" "WBruter" "Back")
+            select opt in "${options[@]}"
+            do
+                case $opt in
+                    "GetDroid")
+                        ./Modules/Droppers/droid/getdroid.sh
+                        ;;
+
+                    "apkinfector")
+                        ./Modules/Droppers/droid/apkinf.sh
+                        ;;
+
+                    "ApkWash")
+                        ./Modules/Droppers/droid/apkwash.sh
+                        ;;
+                        
+                    "Ghost")
+                        ./Modules/Droppers/droid/ghost.sh
+                        ;;
+
+                    "WBruter")
+                        ./Modules/Droppers/droid/wbruter.sh
+                        ;;
+
+                    "Back")
+                        ./tigershark
+                        ;;
+
+                esac
+            done
+        echo -e "${NC}"
+}
+# Obfuscation
+obs(){
+    echo -e "${RED}"
+        PS3='How would you like to obfuscate your payload?'
+            options=("Graffiti" "Shikata Gai Ni" "Back")
+            select opt in "${options[@]}"
+            do
+                case $opt in
+                    "Graffiti")
+                        ./Modules/Droppers/Obs/graffiti.sh
+                        ;;
+
+                    "Shikata Gai Ni")
+                        ./Modules/Droppers/Obs/sg.sh
+                        ;;
+
+                    "Back")
+                        dropper_mods
+                        ;;
+
+                esac
+            done
+        echo -e "${NC}"
+}
+# CVE
+cve(){
+     PS3='How would you like to create your payload?'
+        options=("CVE-2019-0768 (VBScript RCE)" "CVE-2018-8174 (IE11 RCE)" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "CVE-2019-0768 (VBScript RCE)")
+                    echo -e "${LP}This creates an index.html file to be delivered via an infected/self-hosted server${NC}"
+                    ./Modules/Droppers/VB/2019-0768.sh
+                    ;;
+
+                 "CVE-2018-8174 (IE11 RCE)")
+                    ./Modules/Droppers/VB/2018-8174.sh
+                    ;;
+
+                "CVE-2018-15982 (Shockwave Exploit)")
+                    ./Modules/Droppers/CVE/2018-15982.sh
+                    ;;
+
+                "Back")
+                    dropper_mods
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Meterpreter Payloads
+meters(){
+    PS3='How would you like to create your payload?'
+        options=("Enigma"  "SpookFlare" "Phantom-Evasion" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Enigma")
+                    ./Modules/Droppers/Meter/enigma.sh
+                    ;;
+
+                "SpookFlare")
+                    ./Modules/Droppers/Meter/spooky.sh
+                    ;;
+
+                "Phantom-Evasion")
+                    ./Modules/Droppers/Meter/phantom.sh
+                    ;;
+
+                "Back")
+                    dropper_mods
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Recon Modules
+# Gathering Module Selector
+gathering_mods(){
+    echo -e "${RED}"
+    PS3='Please define your activity?'
+        options=("Gathering Potential eMail targets for Campaign" "Gathering Potential Domains for Campaign" "Generate Phishing URL's" "WebCloning" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Gathering Potential eMail targets for Campaign")
+                    email_collection
+                    ;;
+
+                "Gathering Potential Domains for Campaign")
+                    domain_collection
+                    ;;
+
+                "Generate Phishing URL's")
+                    dom_generation
+                    ;;
+
+                "WebCloning")
+                    webclone
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Email Collection Modules
+email_collection(){
+    echo -e "${LP}"
+   PS3='Please select the tool for email gathering'
+        options=("PhishBait" "EmailGen" "PhEmail" "Cr3d0v3r" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "PhishBait")
+                    ./Modules/Gathering/Email/phishbait.sh
+                    ;;
+
+                "EmailGen")
+                    ./Modules/Gathering/Email/egen.sh
+                    ;;
+
+                "PhEmail")
+                    ./Modules/Gathering/Email/phemail.sh
+                    ;;
+
+                "Cr3d0v3r")
+                    ./Modules/Gathering/Email/credover.sh
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Domain Collection Modules
+domain_collection(){
+    echo -e "${LGRY}"
+    PS3='Please select the tool for domain gathering'
+        options=("CatPhish" "DomainHunter" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "CatPhish")
+                    ./Modules/Gathering/Domain/catphish.sh
+                    ;;
+
+                "DomainHunter")
+                    ./Modules/Gathering/Domain/domainhunter.sh
+		            ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Malicious Domain Generation
+dom_generation(){
+    echo -e "${LBLUE}"
+    PS3='Please select the tool for domain generation'
+        options=("EvilURL" "CuteIt" "MaskPhish" "UrlCadiz" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "EvilURL")
+                    ./Modules/Gathering/Generation/evilurl.sh
+                    ;;
+
+	        "CuteIt")
+		    ./Modules/Gathering/Generation/cuteit.sh
+		    ;;
+		    
+		"MaskPhish")
+		    ./Modules/Gathering/Generation/maskphish.sh
+		    ;;
+
+            "UrlCadiz")
+                ./Modules/Gathering/Generation/urlcadiz.sh
+                ;;
+
+                "Back")
+                    gathering_mods
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Website Cloning
+webclone(){
+    echo -e "${LBLUE}"
+    PS3='Please select the tool for Web Cloning'
+        options=("Nero" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Nero")
+                    ./Modules/Gathering/Cloning/nero.sh
+                    ;;
+
+                "Back")
+                    domain_collection
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Phishing Modules
+# Exploitation Module Selector
+phishing_mods(){
+    echo -e "${ORNG}"
+    PS3='What would you like to do?'
+        options=("Create a Single-Page Phishing Site" "Create a Multi-Page/Phishing Campaign" "Spam Phishing Mail" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Create a Single-Page Phishing Site")
+                    single_pole
+                    ;;
+
+                "Create a Multi-Page/Phishing Campaign")
+                    trawler
+                    ;;
+
+                "Spam Phishing Mail")
+                    spammer
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Single-Page Tools
+single_pole(){
+    echo -e "${YLW}"
+    PS3='Please Select Your Tool for Single-Page Phisher Generation'
+        options=("Artemis" "HiddenEye" "PhishX" "WeeMan" "CredSniper" "LockPhish" "WhatPhish" "Shark" "Blackeye-2" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Artemis")
+                    ./Modules/Phishing/Singular/artemis.sh
+                    ;;
+
+                "HiddenEye")
+                    ./Modules/Phishing/Singular/hiddeneye.sh
+                    ;;
+
+                "PhishX")
+                    ./Modules/Phishing/Singular/phishx.sh
+                    ;;
+
+                "WeeMan")
+                    ./Modules/Phishing/Singular/weeman.sh
+                    ;;
+
+                "CredSniper")
+                    ./Modules/Phishing/Singular/credsniper.sh
+                    ;;
+
+                "LockPhish")
+                    ./Modules/Phishing/Singular/lockphish.sh
+                    ;;
+
+                "WhatPhish")
+                    ./Modules/Phishing/Singular/whatphish.sh
+                    ;;
+                    
+                "Shark")
+                    ./Modules/Phishing/Singular/shark.sh
+                    ;;
+
+                "Blackeye-2")
+                    ./Modules/Phishing/Singular/blackeye.sh
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+
+            esac
+        done
+    echo -e "${NC}"
+}
+# Multi-Page Tools
+trawler(){
+    echo -e "${LP}"
+    PS3='Please Select Your Tool for Campaign Phisher Generation'
+    options=("GoPhish" "SocialFish" "STP" "ADV-Phishing" "SPF" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "GoPhish")
+                    ./Modules/Phishing/Trawler/gophish.sh
+                    ;;
+
+                "SocialFish")
+                    ./Modules/Phishing/Trawler/socialfish.sh
+                    ;;
+
+                "STP")
+                    ./Modules/Phishing/Trawler/stp.sh
+                    ;;
+
+                "ADV-Phishing")
+                    ./Modules/Phishing/Trawler/advphish.sh
+                    ;;
+
+                "SPF")
+                    ./Modules/Phishing/Trawler/spf.sh
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+# Phishing Mail Spamming Tools
+spammer(){
+    echo -e "${W}"
+    PS3='Please Select Your Tool for Mail Spamming'
+    options=("PhEmail" "Neos-Mail Spoofer" "FakeMailer" "PhishMailer" "FAQUE" "Back")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "PhEmail")
+                    ./Modules/Baiting/phemail.sh
+                    ;;
+
+                "Neos-Mail Spoofer")
+                    ./Modules/Baiting/neos.sh
+                    ;;
+
+                "FakeMailer")
+                    ./Modules/Baiting/fakemailer.sh
+                    ;;
+
+                "PhishMailer")
+                    ./Modules/Baiting/phishmail.sh
+                    ;;
+
+                "FAQUE")
+                    ./opt/TigerShark/tools/FAQUE/faque.sh
+                    ;;
+
+                "Back")
+                    cd /opt/TigerShark
+                    ./tigershark
+                    ;;
+            esac
+        done
+    echo -e "${NC}"
+}
+update(){
+    cd /opt/TigerShark
+        sudo chown $USER:$USER -R /opt/TigerShark
+        echo -e "${ORNG}"
+        figlet -f mini "Checking for updates"
+        echo -e "${NC}"
+        git fetch
+        VER=$(git pull)
+        if [[ ${VER} == "Already up to date." ]]; then
+            echo -e "${LP}"
+            figlet -f mini "Up to date."
+            echo -e "${NC}"
+        else
+            sleep 5
+            echo -e "${YLW}Are there pull conflicts with files?(y/n)${NC}"
+            read UANS
+            if [[ ${UANS} == "y" ]]; then
+                echo -e "${ORNG}Please enter the conflicting files (seperated by a space)${NC}"
+                read "FILES"
+                rm "${FILES}"
+                git pull
+            else
+                sleep 1
+            fi
+                sudo ./install.sh
+                sudo chown $USER:$USER -R /opt/TigerShark
+                sudo chmod +x Modules --recursive
+                ./tigershark
+        fi
+        echo -e "${ORNG}Would you like to update tools as well?(y/n)${NC}"
+        read TOOLUP
+        if [[ ${TOOLUP} == "y" ]]; then
+            bash Modules/tool-update.sh
+        fi
+}
+#
+#
+# Start of TigerShark
+StartTiger(){
+    sudo chown $USER:$USER -R /opt/TigerShark
+    cd /opt/TigerShark
+    echo -e "${LP}"
+    cat .vs/1
+    echo -e "${ORNG}"
+     python3 .vs/ban.py
+    echo -e "${NC}"
+    if [[ -d '/opt/TigerShark/Results' ]]; then
+        sleep 1
+    else
+        mkdir /opt/TigerShark/Results
+    fi
+    PS3='What would you like to do?'
+            options=("Perform Recon" "Phishing Options" "Servers 'n Payloads" "Update" "Quit")
+            echo -e "${YLW}"
+            select opt in "${options[@]}"
+            do
+                case $opt in
+                    "Perform Recon")
+                        gathering_mods
+                        ;;
+
+                    "Phishing Options")
+                        phishing_mods
+                        ;;
+
+                    "Servers 'n Payloads")
+                        attack_opts
+                        ;;
+
+                    "Update")
+                        update
+                        ;;
+
+                    "Quit")
+                        exit 0
+                        ;;
+                esac
+            done
+    echo -e "${NC}"
+}
+cd /opt/TigerShark
+while getopts "u" options; do            	            # Loop: Get the next option;
+	case "${options}" in                                # use silent error checking;
+                                                        # option a takes 1 arguments.
+		u)
+            update
+            ;;
+	esac
+done
+if [[ $OPTIND == 1 ]]; then				                # if no option is passed
+	StartTiger		  	                                # default command is run
+fi
+exit 0
+
+# czFsM250NzggX18gUmFiYjE3J3MgRGVu
