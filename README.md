@@ -2,11 +2,11 @@
 <p align="center"><img align="center" src="https://img.shields.io/badge/-The_Dead_Bunny_Collective-green"></p>
 <br />
 <p align="center">
- <img align="center" src="https://raw.githubusercontent.com/s1l3nt78/s1l3nt78.github.io/master/TigerShark/tigershark-Release.png">
+ <img align="center" src="https://raw.githubusercontent.com/whiterabb17/s1l3nt78.github.io/master/TigerShark/tigershark-Release.png">
  <br>
- <img align="center" src="https://img.shields.io/github/issues/s1l3nt78/TigerShark">
- <img align="center" src="https://img.shields.io/github/forks/s1l3nt78/TigerShark">
- <img align="center" src="https://img.shields.io/github/stars/s1l3nt78/TigerShark">
+ <img align="center" src="https://img.shields.io/github/issues/whiterabb17/TigerShark">
+ <img align="center" src="https://img.shields.io/github/forks/whiterabb17/TigerShark">
+ <img align="center" src="https://img.shields.io/github/stars/whiterabb17/TigerShark">
  <br />
  <img align="center" src="https://img.shields.io/badge/Build-Release-orange">
  <img align="center" src="https://img.shields.io/badge/Version-6-red">
